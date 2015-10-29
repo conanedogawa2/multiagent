@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Linq;
 
@@ -12,6 +13,7 @@ namespace MultiagentVS.Model
             this._width = 50;
             this.PosX = 10;
             this.PosY = 100;
+            _angle = 0.5 * Math.PI;
 
             this._color = Color.OrangeRed;
             this._distance = 5;
@@ -20,11 +22,7 @@ namespace MultiagentVS.Model
             _road = rd;
         }
 
-        public void Pivoter(int angle)
-        {
-            
-        }
-
+        private double _angle;
 
         private int _width;
 
@@ -66,13 +64,16 @@ namespace MultiagentVS.Model
         {
             //if (_road != null && _road.Cars.Any())
             //{
-
+            // cos 0 = 1
+            // sin 0 = 0
+            PosX +=  Math.Cos(_angle) * _speed;
+            PosY +=  Math.Sin(_angle) * _speed;
             //}
         }
 
         public void Update()
         {
-            PosX += _speed;
+            this.Advance();
         }
     }
 }
