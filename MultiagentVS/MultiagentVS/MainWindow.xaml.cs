@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -36,34 +37,59 @@ namespace MultiagentVS
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
             dispatcherTimer.Start();
+
+            //DispatcherTimer timer = new DispatcherTimer();
+            //timer.Tick += timer_Tick;
+            //timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
+            //timer.Start();
         }
+
+        //private void timer_Tick(object sender, EventArgs e)
+        //{
+        //    DispatcherTimer timer = (DispatcherTimer)sender;
+
+        //    if (timer == null)
+        //        return;
+
+        //    timer.Stop();
+
+        //    _myMap.AddCar(new Car(null));
+        //    Debug.WriteLine("------------Car created");
+        //    timer.Interval = new TimeSpan( 0, 0, 0, 0, _myMap.GetRandomInt(1, 3) );
+        //    timer.Start();
+        //}
 
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("---- MOUSE DOWN ----"); 
+            _myMap.AddCar( new Car(Brushes.Aqua) );
+            Debug.WriteLine("------------Car created");
         }
 
-        void myMap_mapUpdatedEvent(Car v)
+        void myMap_mapUpdatedEvent(IEnumerable<Car> cars)
         {
             mapCanvas.Children.Clear();
 
-            DrawCar(v);
+            DrawCars(cars);
 
             mapCanvas.UpdateLayout();
         }
 
-        private void DrawCar(Car c)
+        private void DrawCars(IEnumerable<Car> cars)
         {
             //Rectangle rect = c.Rect;
-
-            mapCanvas.Children.Add(new ShapeRectangle
+            foreach (Car c in cars)
             {
-                Height = c.Length,
-                Width = c.Width,
-                Margin = new Thickness(c.PosX, c.PosY, 0, 0),
-                Stroke = Brushes.OrangeRed,
-                Fill = Brushes.OrangeRed
-            });
+                //mapCanvas.Children.Add(new ShapeRectangle
+                //{
+                //    Height = c.Length,
+                //    Width = c.Width,
+                //    Margin = new Thickness(c.PosX, c.PosY, 0, 0),
+                //    Stroke = c.Color,
+                //    Fill = c.Color
+                //});
+
+                c.Draw(ref mapCanvas);
+            }
         }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)
