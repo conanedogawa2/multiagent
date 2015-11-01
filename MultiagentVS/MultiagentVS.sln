@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiagentVS", "MultiagentVS\MultiagentVS.csproj", "{B57C78F9-ECA0-4404-B719-E64C51D08AFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{FEEEFE69-0043-46D1-98A6-2E616D62575B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B57C78F9-ECA0-4404-B719-E64C51D08AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B57C78F9-ECA0-4404-B719-E64C51D08AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B57C78F9-ECA0-4404-B719-E64C51D08AFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEEEFE69-0043-46D1-98A6-2E616D62575B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEEEFE69-0043-46D1-98A6-2E616D62575B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEEEFE69-0043-46D1-98A6-2E616D62575B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEEEFE69-0043-46D1-98A6-2E616D62575B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

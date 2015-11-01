@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -15,6 +16,13 @@ namespace MultiagentVS.Model
 {
     public class Car : ObjectInWorld
     {
+        public static short CPT = -1;
+
+        private const double DistanceMargeAcceptance = 0.5;
+        public const double RefDistance = 200;
+
+        public readonly short Id;
+
         protected bool Equals(Car other)
         {
             return PosX.Equals(other.PosX) && PosY.Equals(other.PosY) && this._angle.Equals(other._angle) &&
@@ -36,7 +44,7 @@ namespace MultiagentVS.Model
             {
                 int hashCode = this._angle.GetHashCode();
                 hashCode = (hashCode*397) ^ this._width;
-                hashCode = (hashCode*397) ^ this._speed;
+                hashCode = (hashCode*397) ^ (int)this._speed;
                 hashCode = (hashCode*397) ^ this._length;
                 hashCode = (hashCode*397) ^ (this._color != null ? this._color.GetHashCode() : 0);
                 return hashCode;
@@ -53,9 +61,9 @@ namespace MultiagentVS.Model
             return !Equals(left, right);
         }
 
-        private Random r = new Random();
+        private Random _r = new Random();
 
-        public Car(SolidColorBrush c, Road rd = null)
+        public Car(SolidColorBrush c, Car frontCar = null, Road rd = null)
         {
             _speed = 2;
             _length = 10;
@@ -65,16 +73,19 @@ namespace MultiagentVS.Model
             _angle = 0;
             _color = c ?? Brushes.OrangeRed;
 
-
-            _distance = 5;
-
             _park = null;
             _road = rd;
+            this.FrontCar = frontCar;
+
+            ++CPT;
+            Id = CPT;
         }
 
         private double _angle;
 
         private int _width;
+
+        private Car FrontCar { get; set; }
 
         public int Width
         {
@@ -82,7 +93,14 @@ namespace MultiagentVS.Model
             set { _width = value; }
         }
 
-        private int _speed;
+
+        private float _speed;
+
+        public float Speed
+        {
+            get { return _speed; }
+            set { _speed = value; }
+        }
 
 
         private int _length;
@@ -102,12 +120,21 @@ namespace MultiagentVS.Model
             set { _color = value; }
         }
 
+        /// <summary>
+        /// Set la vitesse en fonction d'une distance
+        /// </summary>
+        /// <param name="distance">Distance avec le vehicule de devant</param>
+        private void AdaptSpeed(double distance)
+        {
+            distance += 100;
 
-        private int _distance;
+            _speed = 2;
 
+            if (distance < 200)
+                _speed = 2 * (float)distance / 200;
+        }
 
         private CarPark _park;
-
 
         private Road _road;
 
@@ -116,9 +143,12 @@ namespace MultiagentVS.Model
 
         public StrucRectangle RectF => new StrucRectangle((float) PosX, (float) PosY, Width, Length);
 
-        //public Rectangle Rect
+        //public static short Id
         //{
-        //    get { return new Rectangle(PosX, PosY, _); }
+        //    get
+        //    {
+        //        return id;
+        //    }
         //}
 
         public void Advance(float step = (float) 0.8)
@@ -137,13 +167,45 @@ namespace MultiagentVS.Model
 
             if (list.Any())
                 Color = Brushes.Red;
+
+            if(this.FrontCar != null)
+                AdaptSpeed( DistanceTo(FrontCar) );
         }
+
+        // why internal?
+        //internal double DistanceToCar(Car c)
+        //{
+
+        //}
+
+        //internal double DistanceToPoint(double wallXMin, double wallYMin, double wallXMax, double wallYMax)
+        //{
+        //    double min = double.MaxValue;
+        //    min = Math.Min(min, this.PosX - wallXMin);
+        //    min = Math.Min(min, this.PosY - wallYMin);
+        //    min = Math.Min(min, wallYMax - this.PosY);
+        //    min = Math.Min(min, wallXMax - this.PosX);
+        //    return min;
+        //}
+
+        //internal double DistanceToPoint(double x, double y)
+        //{
+        //    double squaredDist = 0;
+
+        //    squaredDist = (PosX - x)*(PosX - x) + (PosY - y)*(PosY - y);
+
+        //    return squaredDist;
+        //}
 
         public void Update()
         {
             Advance();
         }
 
+        /// <summary>
+        /// Retourne une liste des objets 'Car' en collision
+        /// </summary>
+        /// <returns> IEnumerable<Car/> </returns>
         private IEnumerable<Car> CollidingCars()
         {
             StrucRectangle rec = RectF;

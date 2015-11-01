@@ -11,7 +11,7 @@ namespace MultiagentVS
     {
         public event MapUpdated mapUpdatedEvent;
         public static readonly short MAXCAR = 10;
-        public static List<Car> Voitures { get; set; }
+        public static List<Car> Voitures = new List<Car>();
 
         Random _randomGenerator;
 

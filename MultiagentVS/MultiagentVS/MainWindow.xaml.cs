@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -26,9 +27,12 @@ namespace MultiagentVS
             Loaded += MainWindow_Loaded;
         }
 
+
+
         void MainWindow_Loaded(object _sender, RoutedEventArgs _e)
         {
             mapCanvas.MouseDown += mapCanvas_MouseDown;
+            mapCanvas.KeyDown += mapCanvas_KeyDown;
 
             _myMap = new Map(mapCanvas.ActualWidth, mapCanvas.ActualHeight);
             _myMap.mapUpdatedEvent += myMap_mapUpdatedEvent;
@@ -42,6 +46,11 @@ namespace MultiagentVS
             //timer.Tick += timer_Tick;
             //timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
             //timer.Start();
+        }
+
+        private void mapCanvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         //private void timer_Tick(object sender, EventArgs e)
@@ -61,8 +70,11 @@ namespace MultiagentVS
 
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _myMap.AddCar( new Car(Brushes.Aqua) );
-            Debug.WriteLine("------------Car created");
+            Car frontCar = Map.Voitures.LastOrDefault(),
+                car = new Car(Brushes.Aqua, frontCar);
+            _myMap.AddCar( car );
+
+            Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id);
         }
 
         void myMap_mapUpdatedEvent(IEnumerable<Car> cars)

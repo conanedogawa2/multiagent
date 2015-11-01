@@ -1,0 +1,112 @@
+﻿using System;
+using System.Diagnostics;
+using System.Drawing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MultiagentVS;
+using MultiagentVS.Model;
+
+namespace UnitTestProject
+{
+    [TestClass]
+    public class GlobalTest
+    {
+        private const double TestDistance = 201, SpeedMargeAcceptance = 0.05, DistanceMargeAcceptance = 0.5;
+        private double _actualDistance, _actualDistance1;
+
+        private void AssertDistances()
+        {
+            Debug.WriteLine("\t_actualDistance:" + _actualDistance
+                //+ " _actualDistance1:" + _actualDistance1
+                + " RefDistance:" + Car.RefDistance
+                + " TestDistance:" + TestDistance
+                + " Marge:" + DistanceMargeAcceptance);
+
+            //Assert.IsTrue(_actualDistance >= Car.REF_DISTANCE - DistanceMargeAcceptance && _actualDistance <= Car.REF_DISTANCE + DistanceMargeAcceptance);
+            //Assert.IsTrue(_actualDistance1 >= Car.REF_DISTANCE - DistanceMargeAcceptance && _actualDistance1 <= Car.REF_DISTANCE + DistanceMargeAcceptance);
+            
+            //Assert.AreEqual(TestDistance, this._actualDistance1);
+            //Assert.AreEqual(this._actualDistance, this._actualDistance1);
+        }
+
+        [TestMethod]
+        public void TestDistanceTo()
+        {
+            short distMax = 800, speed = 2;
+
+            Car c = new Car(null)
+            {
+                PosX = 0,
+                PosY = 0,
+                Speed = speed
+            };
+
+            Car c1 = new Car(null, c)
+            {
+                PosX = -1 * TestDistance,
+                PosY = 0,
+                Speed = speed
+            };
+            Map.Voitures.Add(c);
+            Map.Voitures.Add(c1);
+
+            this._actualDistance = c.DistanceTo(c1);
+            this._actualDistance1 = c1.DistanceTo(c);
+            this.AssertDistances();
+
+            Debug.WriteLine("");
+
+            for (int i = 0; i < distMax; i++)
+            {
+                //Debug.WriteLine(DebugString(c, i, _actualDistance));
+                Debug.WriteLine(DebugString(c1, i, _actualDistance1));
+                c.Advance();
+                c1.Advance();
+
+                Assert.IsTrue(c.Speed >= speed - SpeedMargeAcceptance && c.Speed <= speed + SpeedMargeAcceptance);
+                Assert.IsTrue(c1.Speed >= speed - SpeedMargeAcceptance && c1.Speed <= speed + SpeedMargeAcceptance);
+
+                Debug.WriteLine("\t" + (speed - SpeedMargeAcceptance) + " <= " + c1.Speed + " >= " + speed + SpeedMargeAcceptance);
+                
+                //Assert.AreEqual(speed, c.Speed);
+                //Assert.AreEqual(c.Speed, c1.Speed);
+
+                this._actualDistance = c.DistanceTo(c1);
+                this._actualDistance1 = c1.DistanceTo(c);
+                this.AssertDistances();
+            }
+        }
+
+        private string DebugString(Car c, int i, double distance)
+        {
+            return "[" + i + "] " + "x:" + c.PosX + " y:" + c.PosY + " speed:" + c.Speed + " distToFront:" + distance;
+        }
+
+        [TestMethod]
+        public void TestAdaptSpeed()
+        {
+            short x1 = 10, y1 = 10, speed = 200;
+
+            Car c = new Car(null)
+            {
+                PosX = 0,
+                PosY = 0,
+                Speed = speed
+            };
+
+            Car c1 = new Car(null)
+            {
+                PosX = x1,
+                PosY = y1
+            };
+
+            double dist = c.SquareDistanceTo(c1);
+            Assert.AreEqual(dist, x1*x1 + y1*y1);
+
+            c.Advance();
+            //Assert.AreEqual(c.Speed, speed
+            //PointF target = new PointF(10, 10);
+            //var ditance = c.SquareDistanceTo()
+
+        }
+    }
+}
