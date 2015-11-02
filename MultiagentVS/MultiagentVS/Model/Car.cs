@@ -87,6 +87,9 @@ namespace MultiagentVS.Model
         }
 
         private double _angle;
+        public double Angle { get { return _angle; } set { _angle = value; } }
+        public double DegAngle => _angle * 180 / Math.PI;
+
 
         private int _length;
 
@@ -220,22 +223,28 @@ namespace MultiagentVS.Model
 
         public override void Draw(ref Canvas parent)
         {
-            parent.Children.Add(new ShapeRectangle
+            ShapeRectangle mainRect = new ShapeRectangle
             {
                 Height = this.Height,
                 Width = this.Length,
                 Margin = new Thickness(PosX, PosY, 0, 0),
                 Stroke = Color,
                 Fill = Color
-            });
-            parent.Children.Add(new ShapeRectangle
-            {
-                Height = 10,
-                Width = 10,
-                Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
-                Stroke = Brushes.Red,
-                Fill = Brushes.Red
-            });
+            },
+                smallRect = new ShapeRectangle
+                {
+                    Height = 10,
+                    Width = 10,
+                    Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
+                    Stroke = Brushes.Red,
+                    Fill = Brushes.Red
+                };
+
+            MainWindow.RotateRectangle(ref mainRect, DegAngle, Middle);
+            MainWindow.RotateRectangle(ref smallRect, DegAngle, Middle);
+
+            parent.Children.Add(mainRect);
+            parent.Children.Add(smallRect);
         }
 
         public bool IsOutOfMap()

@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using MultiagentVS.Model;
+using Brushes = System.Windows.Media.Brushes;
 using Rectangle = System.Drawing.Rectangle;
 using ShapeRectangle = System.Windows.Shapes.Rectangle;
 using Line = System.Windows.Shapes.Line;
@@ -130,6 +132,18 @@ namespace MultiagentVS
             //{
             //    c.Draw(ref mapCanvas);
             //}
+        }
+
+        public static void RotateRectangle(ref ShapeRectangle rec, double angle, PointF middle)
+        {
+            RotateTransform rt = new RotateTransform
+            {
+                CenterX = middle.X,
+                CenterY = middle.Y,
+                Angle = angle
+            };
+
+            rec.LayoutTransform = rt;
         }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)
