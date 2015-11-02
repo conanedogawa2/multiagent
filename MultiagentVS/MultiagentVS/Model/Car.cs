@@ -18,7 +18,7 @@ namespace MultiagentVS.Model
     {
         public static short CPT = -1;
 
-        private const double DistanceMargeAcceptance = 0.5;
+        //private const double DistanceMargeAcceptance = 0.5;
         public const double RefDistance = 200;
 
         public readonly short Id;
@@ -26,7 +26,7 @@ namespace MultiagentVS.Model
         protected bool Equals(Car other)
         {
             return PosX.Equals(other.PosX) && PosY.Equals(other.PosY) && this._angle.Equals(other._angle) &&
-                   this._width == other._width && this._speed == other._speed && this._length == other._length &&
+                   this._length == other._length && this._speed == other._speed && this._height == other._height &&
                    Equals(this._color, other._color);
         }
 
@@ -43,9 +43,9 @@ namespace MultiagentVS.Model
             unchecked
             {
                 int hashCode = this._angle.GetHashCode();
-                hashCode = (hashCode*397) ^ this._width;
-                hashCode = (hashCode*397) ^ (int)this._speed;
                 hashCode = (hashCode*397) ^ this._length;
+                hashCode = (hashCode*397) ^ (int)this._speed;
+                hashCode = (hashCode*397) ^ this._height;
                 hashCode = (hashCode*397) ^ (this._color != null ? this._color.GetHashCode() : 0);
                 return hashCode;
             }
@@ -63,34 +63,39 @@ namespace MultiagentVS.Model
 
         private Random _r = new Random();
 
-        public Car(SolidColorBrush c, Car frontCar = null, Road rd = null)
+        public Car(SolidColorBrush c, Road rd, float posX = 0, Car frontCar = null)
         {
             _speed = 2;
-            _length = 10;
-            _width = 25;
-            PosX = 10;
-            PosY = 100;
-            _angle = 0;
+            this._height = 10;
+            this._length = 25;
+            PosX = posX;
+            PosY = rd.PosY + Road.Height / (float)2;
+            _angle = rd.SensAngle;
             _color = c ?? Brushes.OrangeRed;
 
             _park = null;
+
             _road = rd;
+
             this.FrontCar = frontCar;
 
             ++CPT;
             Id = CPT;
+
+            if (rd != null)
+                rd.Cars.Add(this);
         }
 
         private double _angle;
 
-        private int _width;
+        private int _length;
 
         private Car FrontCar { get; set; }
 
-        public int Width
+        public int Length
         {
-            get { return _width; }
-            set { _width = value; }
+            get { return this._length; }
+            set { this._length = value; }
         }
 
 
@@ -103,12 +108,12 @@ namespace MultiagentVS.Model
         }
 
 
-        private int _length;
+        private int _height;
 
-        public int Length
+        public int Height
         {
-            get { return _length; }
-            set { _length = value; }
+            get { return this._height; }
+            set { this._height = value; }
         }
 
 
@@ -139,9 +144,9 @@ namespace MultiagentVS.Model
         private Road _road;
 
         public PointF Middle
-            => new PointF((float) ((this.PosX + this._length)/2), (float) ((this.PosX - this._length)/2));
+            => new PointF((float) ((this.PosX + this._height)/2), (float) ((this.PosX - this._height)/2));
 
-        public StrucRectangle RectF => new StrucRectangle((float) PosX, (float) PosY, Width, Length);
+        public StrucRectangle RectF => new StrucRectangle((float) PosX, (float) PosY, this.Length, this.Height);
 
         //public static short Id
         //{
@@ -210,19 +215,32 @@ namespace MultiagentVS.Model
         {
             StrucRectangle rec = RectF;
 
-            return Map.Voitures.Where(c => rec.IntersectsWith(c.RectF)).Where(c => !c.Equals(this)).ToList();
+            return _road.Cars.Where(c => rec.IntersectsWith(c.RectF)).Where(c => !c.Equals(this)).ToList();
         }
 
-        public void Draw(ref Canvas parent)
+        public override void Draw(ref Canvas parent)
         {
             parent.Children.Add(new ShapeRectangle
             {
-                Height = Length,
-                Width = Width,
+                Height = this.Height,
+                Width = this.Length,
                 Margin = new Thickness(PosX, PosY, 0, 0),
                 Stroke = Color,
                 Fill = Color
             });
+            parent.Children.Add(new ShapeRectangle
+            {
+                Height = 10,
+                Width = 10,
+                Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
+                Stroke = Brushes.Red,
+                Fill = Brushes.Red
+            });
+        }
+
+        public bool IsOutOfMap()
+        {
+            return PosX < 0 || PosX > MainWindow.Width || PosY < 0 || PosY > MainWindow.Height;
         }
     }
 }

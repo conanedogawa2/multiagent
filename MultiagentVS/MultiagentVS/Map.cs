@@ -11,7 +11,10 @@ namespace MultiagentVS
     {
         public event MapUpdated mapUpdatedEvent;
         public static readonly short MAXCAR = 10;
-        public static List<Car> Voitures = new List<Car>();
+
+        private static int RoadBaseY => 100;
+        public static Road RightToLeft = new Road(RoadBaseY, Math.PI);
+        public static Road LeftToRight = new Road(RoadBaseY + Road.Height, 0);
 
         Random _randomGenerator;
 
@@ -24,20 +27,11 @@ namespace MultiagentVS
             MAX_HEIGHT = _height;
             _randomGenerator = new Random();
 
-            Voitures = new List<Car>();
-            //Voitures = new List<Car>
-            //{
-            //    { new Car(null) }
-            //};
-
         }
 
-        public void AddCar(Car c)
+        public void AddCarOnRoad(Car c, ref Road road)
         {
-            Voitures.Add(c);
-            
-            if(Voitures.Count >= MAXCAR)
-                Voitures.RemoveAt(0);
+            road.Cars.Add(c);
         }
 
         public int GetRandomInt(int inclMin, int extMax)
@@ -47,18 +41,18 @@ namespace MultiagentVS
 
         public void UpdateEnvironnement()
         {
-            UpdateCar();
+            this.UpdateRoads();
 
             if (mapUpdatedEvent != null)
             {
-                mapUpdatedEvent(Voitures);
+                mapUpdatedEvent(LeftToRight.Cars);
             }
         }
 
-        private void UpdateCar()
+        private void UpdateRoads()
         {
-            foreach (Car voiture in Voitures)
-                voiture.Update();
+            LeftToRight.Update();
+            RightToLeft.Update();
         }
     }
 }

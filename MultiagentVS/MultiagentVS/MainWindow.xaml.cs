@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace MultiagentVS
     public partial class MainWindow
     {
         private static int FPS = 60;
+        public static readonly int Width = 800;
+        public static readonly int Height = 600;
         Map _myMap;
 
         public MainWindow()
@@ -62,7 +65,7 @@ namespace MultiagentVS
 
         //    timer.Stop();
 
-        //    _myMap.AddCar(new Car(null));
+        //    _myMap.AddCarOnRoad(new Car(null));
         //    Debug.WriteLine("------------Car created");
         //    timer.Interval = new TimeSpan( 0, 0, 0, 0, _myMap.GetRandomInt(1, 3) );
         //    timer.Start();
@@ -70,38 +73,63 @@ namespace MultiagentVS
 
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Car frontCar = Map.Voitures.LastOrDefault(),
-                car = new Car(Brushes.Aqua, frontCar);
-            _myMap.AddCar( car );
+            Road road = Map.LeftToRight;
+            float carX = 0;
 
-            Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id);
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                road = Map.RightToLeft;
+                carX = Width;
+            }
+
+            Car frontCar = road.LastCar,
+                car = new Car(Brushes.Aqua, road, carX, frontCar);
+
+            Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
         }
 
         void myMap_mapUpdatedEvent(IEnumerable<Car> cars)
         {
             mapCanvas.Children.Clear();
 
-            DrawCars(cars);
+            this.DrawMap(/*cars*/);
 
             mapCanvas.UpdateLayout();
         }
 
-        private void DrawCars(IEnumerable<Car> cars)
+        private void DrawMap(/*IEnumerable<Car> cars*/)
         {
-            //Rectangle rect = c.Rect;
-            foreach (Car c in cars)
-            {
-                //mapCanvas.Children.Add(new ShapeRectangle
-                //{
-                //    Height = c.Length,
-                //    Width = c.Width,
-                //    Margin = new Thickness(c.PosX, c.PosY, 0, 0),
-                //    Stroke = c.Color,
-                //    Fill = c.Color
-                //});
+            // TODO: pass cars as param
+            List<Car> cars = Map.LeftToRight.Cars.Concat(Map.RightToLeft.Cars).ToList();
+            int index = 0, max = cars.Count;
 
-                c.Draw(ref mapCanvas);
+            Map.LeftToRight.Draw(ref mapCanvas);
+            Map.RightToLeft.Draw(ref mapCanvas);
+            Car c;
+
+            for (; index < max; index++)
+            {
+                c = cars.ElementAt(index);
+
+                if (c.IsOutOfMap())
+                {
+                    cars.RemoveAt(index);
+                    max--;
+
+                    if (max == index)
+                        return;
+
+                    index--;
+                }
+                else
+                    c.Draw(ref mapCanvas);
             }
+
+            //Rectangle rect = c.Rect;
+            //foreach (Car c in cars)
+            //{
+            //    c.Draw(ref mapCanvas);
+            //}
         }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)

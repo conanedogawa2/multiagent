@@ -1,27 +1,71 @@
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Ink;
+using ShapeRectangle = System.Windows.Shapes.Rectangle;
+using MediaBrush = System.Windows.Media.Brushes;
+
 
 namespace MultiagentVS.Model
 {
-    public class Road
+    public class Road : ObjectInWorld
     {
-        public Road(int length = 100)
-        {
-            this.Length = length;
-            this.Cars = new HashSet<Car>();
-        }
-
         public int Length { get; private set; }
 
-        public HashSet<Car> Cars { get; private set; }
+        public List<Car> Cars { get; set; }
 
-        public void AddCar(Car c)
+        public double SensAngle { get; private set; }
+
+        public static readonly int Height = 30;
+
+        public Car LastCar => Cars.LastOrDefault();
+
+        public Road(double posY, double sensAngle, int length = 100)
         {
-            Cars.Add(c);
+            this.PosY = posY;
+            PosX = 0;
+            SensAngle = sensAngle;
+            Length = length;
+            Cars = new List<Car>();
         }
 
-        public void RemoveCar(Car c)
+
+        //public void AddCar(Car c)
+        //{
+        //    if (Cars.Count >= Height)
+        //        return;
+
+        //    Cars.Add(c);
+        //}
+
+        //public void RemoveCar(Car c)
+        //{
+        //    Cars.Remove(c);
+        //}
+        public void Update()
         {
-            Cars.Remove(c);
+            UpdateCars();
+        }
+
+        private void UpdateCars()
+        {
+            foreach (Car voiture in Cars)
+                voiture.Update();
+        }
+
+        public override void Draw(ref Canvas parent)
+        {
+            parent.Children.Add(
+                new ShapeRectangle
+                {
+                    Height = Height,
+                    Width = MainWindow.Width,
+                    Margin = new Thickness(PosX, PosY, 0, 0),
+                    Fill = MediaBrush.DarkGray
+                }
+            );
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Windows.Controls;
 
 namespace MultiagentVS.Model
 {
@@ -36,5 +38,7 @@ namespace MultiagentVS.Model
             return Math.Sqrt((_object.PosX - PosX) * (_object.PosX - PosX) + (_object.PosY - PosY) * (_object.PosY - PosY));
             //return Math.Sqrt( SquareDistanceTo(_object) );
         }
+
+        public virtual void Draw(ref Canvas parent) { }
     }
 }
