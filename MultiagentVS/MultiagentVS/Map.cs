@@ -5,7 +5,7 @@ using MultiagentVS.Model;
 namespace MultiagentVS
 {
     //public delegate void MapUpdated(FishAgent[] _fish, List<BadZone> _obstacles);
-    public delegate void MapUpdated(IEnumerable<Car> voitures);
+    public delegate void MapUpdated();
 
     public class Map
     {
@@ -13,10 +13,15 @@ namespace MultiagentVS
         public static readonly short MAXCAR = 10;
 
         private static int RoadBaseY => 100;
-        public static Road RightToLeft = new Road(RoadBaseY, Math.PI);
-        public static Road LeftToRight = new Road(RoadBaseY + Road.Height, 0);
 
-        Random _randomGenerator;
+        public static List<Road> Roads = new List<Road>
+        {
+            new Road(Math.PI, RoadBaseY),
+            new Road(0, RoadBaseY + Road.Height),
+            new Road(Math.PI / 4, RoadBaseY + Road.Height, -10)
+        };
+
+        static Random _randomGenerator;
 
         protected double MAX_WIDTH;
         protected double MAX_HEIGHT;
@@ -29,30 +34,30 @@ namespace MultiagentVS
 
         }
 
-        public void AddCarOnRoad(Car c, ref Road road)
-        {
-            road.Cars.Add(c);
-        }
+        //public void AddCarOnRoad(Car c, ref Road road)
+        //{
+        //    road.Cars.Add(c);
+        //}
 
-        public int GetRandomInt(int inclMin, int extMax)
+        public static int GetRandomInt(int inclMin, int extMax)
         {
             return _randomGenerator.Next(inclMin, extMax);
         }
 
         public void UpdateEnvironnement()
         {
-            this.UpdateRoads();
+            UpdateRoads();
 
             if (mapUpdatedEvent != null)
             {
-                mapUpdatedEvent(LeftToRight.Cars);
+                mapUpdatedEvent();
             }
         }
 
         private void UpdateRoads()
         {
-            LeftToRight.Update();
-            RightToLeft.Update();
+            foreach (Road road in Roads)
+                road.Update();
         }
     }
 }

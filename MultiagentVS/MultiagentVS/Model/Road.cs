@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -12,20 +13,30 @@ namespace MultiagentVS.Model
 {
     public class Road : ObjectInWorld
     {
-        public int Length { get; private set; }
+        public static readonly Window Window = ((App)Application.Current).MainWindow;
+        public PointF Middle
+            => new PointF((float)(this.PosX + Length / 2), (float)(PosX - Length / 2));
+
+        public float Length { get; private set; }
 
         public List<Car> Cars { get; set; }
 
         public double SensAngle { get; private set; }
 
+        public double SensDegAngle
+        {
+            get { return (SensAngle/Math.PI)*180; }
+            private set { SensAngle = (value/180)*Math.PI; }
+        }
+
         public static readonly int Height = 30;
 
         public Car LastCar => Cars.LastOrDefault();
 
-        public Road(double posY, double sensAngle, int length = 100)
+        public Road(double sensAngle, double posY, double posX = 0, int length = 100)
         {
             this.PosY = posY;
-            PosX = 0;
+            PosX = posX;
             SensAngle = sensAngle;
             Length = length;
             Cars = new List<Car>();
@@ -57,15 +68,17 @@ namespace MultiagentVS.Model
 
         public override void Draw(ref Canvas parent)
         {
-            parent.Children.Add(
-                new ShapeRectangle
-                {
-                    Height = Height,
-                    Width = MainWindow.Width,
-                    Margin = new Thickness(PosX, PosY, 0, 0),
-                    Fill = MediaBrush.DarkGray
-                }
-            );
+            ShapeRectangle mainRect = new ShapeRectangle
+            {
+                Height = Height,
+                Width = Window.Width,
+                Margin = new Thickness(PosX, PosY, 0, 0),
+                Fill = MediaBrush.DarkGray
+            };
+
+            MainWindow.RotateRectangle(ref mainRect, SensDegAngle, Middle);
+
+            parent.Children.Add(mainRect);
         }
     }
 }

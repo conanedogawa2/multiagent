@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MultiagentVS;
 using MultiagentVS.Model;
+using Brushes = System.Windows.Media.Brushes;
+using ShapeRectangle = System.Windows.Shapes.Rectangle;
+
 
 namespace UnitTestProject
 {
@@ -31,7 +36,7 @@ namespace UnitTestProject
         [TestMethod]
         public void TestDistanceTo()
         {
-            short distMax = 800, speed = 2;
+            //short distMax = 800, speed = 2;
 
             ////Car c = new Car(null)
             ////{
@@ -108,6 +113,29 @@ namespace UnitTestProject
             ////PointF target = new PointF(10, 10);
             ////var ditance = c.SquareDistanceTo()
 
+        }
+
+        [TestMethod]
+        public void TestRotate()
+        {
+            float Height = 10, Length = 50, PosX = 10, PosY = 10;
+            PointF Middle = new PointF(PosX + Length / 2, PosY + Height / 2);
+
+            ShapeRectangle mainRect = new ShapeRectangle
+            {
+                Height = Height,
+                Width = Length,
+                Margin = new Thickness(PosX, PosY, 0, 0)
+            },
+                smallRect = new ShapeRectangle
+                {
+                    Height = 10,
+                    Width = 10,
+                    Margin = new Thickness(PosX + Length - 10, PosY, 0, 0)
+                };
+
+            MainWindow.RotateRectangle(ref mainRect, 90, Middle);
+            MainWindow.RotateRectangle(ref smallRect, 90, Middle);
         }
     }
 }

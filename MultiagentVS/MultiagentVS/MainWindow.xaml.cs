@@ -22,9 +22,10 @@ namespace MultiagentVS
     public partial class MainWindow
     {
         private static int FPS = 60;
-        public static readonly int Width = 800;
-        public static readonly int Height = 600;
+        //public static readonly int Width = 800;
+        //public static readonly int Height = 600;
         Map _myMap;
+        CarMan _cm;
 
         public MainWindow()
         {
@@ -75,26 +76,31 @@ namespace MultiagentVS
 
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Road road = Map.LeftToRight;
-            float carX = 0;
+            //Road road = Map.LeftToRight;
+            //double carX = 0;
 
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                road = Map.RightToLeft;
-                carX = Width;
-            }
+            //if (e.ChangedButton == MouseButton.Right)
+            //{
+            //    road = Map.RightToLeft;
+            //    carX = Width;
+            //}
 
-            Car frontCar = road.LastCar,
-                car = new Car(Brushes.Aqua, road, carX, frontCar);
+            //Car frontCar = road.LastCar,
+            //    car = new Car(Brushes.Aqua, road, carX, frontCar);
 
-            Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
+            //Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
+
+            //CarMan.CreateCar();
+
+            if(_cm == null)
+                _cm = new CarMan();
         }
 
-        void myMap_mapUpdatedEvent(IEnumerable<Car> cars)
+        void myMap_mapUpdatedEvent()
         {
             mapCanvas.Children.Clear();
 
-            this.DrawMap(/*cars*/);
+            this.DrawMap();
 
             mapCanvas.UpdateLayout();
         }
@@ -102,11 +108,22 @@ namespace MultiagentVS
         private void DrawMap(/*IEnumerable<Car> cars*/)
         {
             // TODO: pass cars as param
-            List<Car> cars = Map.LeftToRight.Cars.Concat(Map.RightToLeft.Cars).ToList();
+            //List<Car> cars = Map.LeftToRight.Cars.Concat(Map.RightToLeft.Cars).ToList();
+
+
+            List<Car> cars = new List<Car>();
+
+            foreach (Road road in Map.Roads)
+            {
+                cars = cars.Concat(road.Cars).ToList();
+                road.Draw(ref mapCanvas);
+            }
+
             int index = 0, max = cars.Count;
 
-            Map.LeftToRight.Draw(ref mapCanvas);
-            Map.RightToLeft.Draw(ref mapCanvas);
+            //Map.LeftToRight.Draw(ref mapCanvas);
+            //Map.RightToLeft.Draw(ref mapCanvas);
+            //Map.TopToBottom.Draw(ref mapCanvas);
             Car c;
 
             for (; index < max; index++)
@@ -144,6 +161,11 @@ namespace MultiagentVS
             };
 
             rec.LayoutTransform = rt;
+        }
+
+        public static void RotateCar(ref Car car, double angle, PointF middle)
+        {
+
         }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)

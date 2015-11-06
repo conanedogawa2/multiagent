@@ -17,16 +17,17 @@ namespace MultiagentVS.Model
     public class Car : ObjectInWorld
     {
         public static short CPT = -1;
+        public static readonly Window Window = ((App) Application.Current).MainWindow;
 
         //private const double DistanceMargeAcceptance = 0.5;
-        public const double RefDistance = 200;
+        public const double RefDistance = 300, MinDistance = 130;
 
         public readonly short Id;
 
         protected bool Equals(Car other)
         {
             return PosX.Equals(other.PosX) && PosY.Equals(other.PosY) && this._angle.Equals(other._angle) &&
-                   this._length == other._length && this._speed == other._speed && this._height == other._height &&
+                   this._length == other._length && this._speed.Equals(other._speed) && this._height == other._height &&
                    Equals(this._color, other._color);
         }
 
@@ -43,10 +44,10 @@ namespace MultiagentVS.Model
             unchecked
             {
                 int hashCode = this._angle.GetHashCode();
-                hashCode = (hashCode*397) ^ this._length;
-                hashCode = (hashCode*397) ^ (int)this._speed;
-                hashCode = (hashCode*397) ^ this._height;
-                hashCode = (hashCode*397) ^ (this._color != null ? this._color.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ _length;
+                hashCode = (hashCode*397) ^ (int)_speed;
+                hashCode = (hashCode*397) ^ _height;
+                hashCode = (hashCode*397) ^ (_color?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }
@@ -63,7 +64,7 @@ namespace MultiagentVS.Model
 
         private Random _r = new Random();
 
-        public Car(SolidColorBrush c, Road rd, float posX = 0, Car frontCar = null)
+        public Car(SolidColorBrush c, Road rd, double posX = 0, Car frontCar = null)
         {
             _speed = 2;
             this._height = 10;
@@ -82,14 +83,17 @@ namespace MultiagentVS.Model
             ++CPT;
             Id = CPT;
 
-            if (rd != null)
-                rd.Cars.Add(this);
+            rd.Cars.Add(this);
         }
 
         private double _angle;
-        public double Angle { get { return _angle; } set { _angle = value; } }
-        public double DegAngle => _angle * 180 / Math.PI;
+        public double Angle { get { return _angle; } set { _angle = value % (2 * Math.PI); } }
 
+        public double DegAngle
+        {
+            get { return _angle*180/Math.PI; }
+            set { _angle = value*Math.PI/180; }
+        }
 
         private int _length;
 
@@ -139,7 +143,12 @@ namespace MultiagentVS.Model
             _speed = 2;
 
             if (distance < 200)
-                _speed = 2 * (float)distance / 200;
+            {
+                _speed = 2*(float) distance/200;
+
+                if (distance <= MinDistance)
+                    _speed = 0;
+            }
         }
 
         private CarPark _park;
@@ -176,7 +185,10 @@ namespace MultiagentVS.Model
             if (list.Any())
                 Color = Brushes.Red;
 
-            if(this.FrontCar != null)
+            //if (_r.Next(0, 100) == 0)
+            //    DegAngle += _r.Next(0, 180) - 90;
+
+            if (FrontCar != null)
                 AdaptSpeed( DistanceTo(FrontCar) );
         }
 
@@ -230,26 +242,26 @@ namespace MultiagentVS.Model
                 Margin = new Thickness(PosX, PosY, 0, 0),
                 Stroke = Color,
                 Fill = Color
-            },
-                smallRect = new ShapeRectangle
-                {
-                    Height = 10,
-                    Width = 10,
-                    Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
-                    Stroke = Brushes.Red,
-                    Fill = Brushes.Red
-                };
+            };//,
+                //smallRect = new ShapeRectangle
+                //{
+                //    Height = 10,
+                //    Width = 10,
+                //    Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
+                //    Stroke = Brushes.Red,
+                //    Fill = Brushes.Red
+                //};
 
             MainWindow.RotateRectangle(ref mainRect, DegAngle, Middle);
-            MainWindow.RotateRectangle(ref smallRect, DegAngle, Middle);
+            //MainWindow.RotateRectangle(ref smallRect, DegAngle, Middle);
 
             parent.Children.Add(mainRect);
-            parent.Children.Add(smallRect);
+            //parent.Children.Add(smallRect);
         }
 
         public bool IsOutOfMap()
         {
-            return PosX < 0 || PosX > MainWindow.Width || PosY < 0 || PosY > MainWindow.Height;
+            return PosX < 0 || PosX > Window.Width || PosY < 0 || PosY > Window.Height;
         }
     }
 }

@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Map.cs" />
     <Compile Include="Model\Car.cs" />
+    <Compile Include="Model\CarMan.cs" />
     <Compile Include="Model\CarPark.cs" />
     <Compile Include="Model\ObjectInWorld.cs" />
     <Compile Include="Model\Road.cs" />
