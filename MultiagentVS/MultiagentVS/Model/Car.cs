@@ -132,6 +132,13 @@ namespace MultiagentVS.Model
             set { _color = value; }
         }
 
+        private SolidColorBrush _borderColor;
+        public SolidColorBrush BorderColor
+        {
+            get { return _borderColor; }
+            set { _borderColor = value; }
+        }
+
         /// <summary>
         /// Set la vitesse en fonction d'une distance
         /// </summary>
@@ -180,10 +187,9 @@ namespace MultiagentVS.Model
 
             IEnumerable<Car> list = this.CollidingCars();
 
-            Color = Brushes.Aqua;
-
+            BorderColor = Color;
             if (list.Any())
-                Color = Brushes.Red;
+                BorderColor = Brushes.Red;
 
             //if (_r.Next(0, 100) == 0)
             //    DegAngle += _r.Next(0, 180) - 90;
@@ -240,7 +246,7 @@ namespace MultiagentVS.Model
                 Height = this.Height,
                 Width = this.Length,
                 Margin = new Thickness(PosX, PosY, 0, 0),
-                Stroke = Color,
+                Stroke = BorderColor,
                 Fill = Color
             };//,
                 //smallRect = new ShapeRectangle

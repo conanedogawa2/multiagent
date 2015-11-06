@@ -28,8 +28,8 @@ namespace MultiagentVS.Model
         {
             CreateCar();
 
-            int MsInterval = Map.GetRandomInt(100, 999);
-            int SInterval = Map.GetRandomInt(0, 2);
+            int MsInterval = Map.GetRandomInt(10, 999);
+            int SInterval = Map.GetRandomInt(0, 1);
             ((DispatcherTimer) _sender).Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
             ((DispatcherTimer)_sender).Start();
         }
@@ -40,7 +40,7 @@ namespace MultiagentVS.Model
             double carX = 0;
             int nbRoad = Map.Roads.Count;
             int rand = Map.GetRandomInt(0, nbRoad);
-
+            var carColor = RandomBrush();
 
             road = Map.Roads[rand];
             if (rand == 0)
@@ -50,11 +50,23 @@ namespace MultiagentVS.Model
 
 
             Car frontCar = road.LastCar,
-                car = new Car(Brushes.Aqua, road, carX, frontCar);
+                car = new Car(carColor, road, carX, frontCar);
 
             Debug.WriteLine("------------Car " + car.Id + " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
         }
 
+        private static SolidColorBrush RandomBrush()
+        {
+            var r = new Random();
+            var properties = typeof(Brushes).GetProperties();
+            var count = properties.Count();
 
+            var colour = properties
+                        .Select(x => new { Property = x, Index = r.Next(count) })
+                        .OrderBy(x => x.Index)
+                        .First();
+
+            return (SolidColorBrush)colour.Property.GetValue(colour, null);
+        }
     }
 }
