@@ -38,7 +38,6 @@ namespace MultiagentVS
         void MainWindow_Loaded(object _sender, RoutedEventArgs _e)
         {
             mapCanvas.MouseDown += mapCanvas_MouseDown;
-            mapCanvas.KeyDown += mapCanvas_KeyDown;
 
             _myMap = new Map(mapCanvas.ActualWidth, mapCanvas.ActualHeight);
             _myMap.mapUpdatedEvent += myMap_mapUpdatedEvent;
@@ -47,53 +46,16 @@ namespace MultiagentVS
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
             dispatcherTimer.Start();
-
-            //DispatcherTimer timer = new DispatcherTimer();
-            //timer.Tick += timer_Tick;
-            //timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
-            //timer.Start();
         }
-
-        private void mapCanvas_KeyDown(object sender, KeyEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        //private void timer_Tick(object sender, EventArgs e)
-        //{
-        //    DispatcherTimer timer = (DispatcherTimer)sender;
-
-        //    if (timer == null)
-        //        return;
-
-        //    timer.Stop();
-
-        //    _myMap.AddCarOnRoad(new Car(null));
-        //    Debug.WriteLine("------------Car created");
-        //    timer.Interval = new TimeSpan( 0, 0, 0, 0, _myMap.GetRandomInt(1, 3) );
-        //    timer.Start();
-        //}
-
+        
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //Road road = Map.LeftToRight;
-            //double carX = 0;
-
-            //if (e.ChangedButton == MouseButton.Right)
-            //{
-            //    road = Map.RightToLeft;
-            //    carX = Width;
-            //}
-
-            //Car frontCar = road.LastCar,
-            //    car = new Car(Brushes.Aqua, road, carX, frontCar);
-
-            //Debug.WriteLine("------------Car " + car.Id +  " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
-
-            //CarMan.CreateCar();
-
-            if(_cm == null)
+            if (_cm == null)
+            {
                 _cm = new CarMan();
+                //Map.TrafLight = new TrafficLight();
+                Map.XRoad = new XRoad();
+            }
         }
 
         void myMap_mapUpdatedEvent()
@@ -144,11 +106,8 @@ namespace MultiagentVS
                     c.Draw(ref mapCanvas);
             }
 
-            //Rectangle rect = c.Rect;
-            //foreach (Car c in cars)
-            //{
-            //    c.Draw(ref mapCanvas);
-            //}
+            if(Map.XRoad != null)
+                Map.XRoad.Draw(ref mapCanvas);
         }
 
         public static void RotateRectangle(ref ShapeRectangle rec, double angle, PointF middle)

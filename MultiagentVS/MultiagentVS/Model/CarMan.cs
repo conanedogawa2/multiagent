@@ -43,14 +43,9 @@ namespace MultiagentVS.Model
             var carColor = RandomBrush();
 
             road = Map.Roads[rand];
-            if (rand == 0)
-            {
-                carX = Application.Current.MainWindow.Width;
-            }
-
 
             Car frontCar = road.LastCar,
-                car = new Car(carColor, road, carX, frontCar);
+                car = new Car(carColor, road, frontCar);
 
             Debug.WriteLine("------------Car " + car.Id + " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
         }

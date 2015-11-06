@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using MultiagentVS.Model;
 
 namespace MultiagentVS
@@ -12,13 +13,18 @@ namespace MultiagentVS
         public event MapUpdated mapUpdatedEvent;
         public static readonly short MAXCAR = 10;
 
+        //public static TrafficLight TrafLight;// = new TrafficLight();
+        public static XRoad XRoad { get; set; }
+
         private static int RoadBaseY => 100;
 
         public static List<Road> Roads = new List<Road>
         {
-            new Road(Math.PI, RoadBaseY),
-            new Road(0, RoadBaseY + Road.Height),
-            new Road(Math.PI / 4, RoadBaseY + Road.Height, -10)
+            new Road(Math.PI, RoadBaseY, 0, 800),
+            new Road(0, RoadBaseY + Road.Height, 0),
+            //new Road(Math.PI / 4, RoadBaseY + Road.Height, -10),
+            new Road(Math.PI / -2, 0, 500, 0, 610),
+            new Road(Math.PI / 2, 0, 500 - Road.Height, 0, 0)
         };
 
         static Random _randomGenerator;

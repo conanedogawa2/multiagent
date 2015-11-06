@@ -64,13 +64,13 @@ namespace MultiagentVS.Model
 
         private Random _r = new Random();
 
-        public Car(SolidColorBrush c, Road rd, double posX = 0, Car frontCar = null)
+        public Car(SolidColorBrush c, Road rd, Car frontCar = null)
         {
             _speed = 2;
-            this._height = 10;
-            this._length = 25;
-            PosX = posX;
-            PosY = rd.PosY + Road.Height / (float)2;
+            _height = 10;
+            _length = 25;
+            PosX = rd.CarX + Road.Height / (float)2;
+            PosY = rd.CarY + Road.Height / (float)2;
             _angle = rd.SensAngle;
             _color = c ?? Brushes.OrangeRed;
 
@@ -153,13 +153,14 @@ namespace MultiagentVS.Model
             {
                 _speed = 2*(float) distance/200;
 
-                if (distance <= MinDistance)
+                if (distance <= MinDistance/* || (FrontCar != null && FrontCar.Speed.Equals(0))*/)
                     _speed = 0;
             }
         }
 
         private CarPark _park;
-
+        private bool LightPassed = false;
+        private double DistToLight = 1000;
         private Road _road;
 
         public PointF Middle
@@ -177,11 +178,6 @@ namespace MultiagentVS.Model
 
         public void Advance(float step = (float) 0.8)
         {
-            //int rand = r.Next(0,  20);
-
-            //if (rand == 0)
-            //    _angle = r.Next(0, 2 * (int)Math.PI);
-
             PosX += Math.Cos(_angle)*_speed*step;
             PosY += Math.Sin(_angle)*_speed*step;
 
@@ -191,11 +187,43 @@ namespace MultiagentVS.Model
             if (list.Any())
                 BorderColor = Brushes.Red;
 
-            //if (_r.Next(0, 100) == 0)
-            //    DegAngle += _r.Next(0, 180) - 90;
+            double distanceToLight;
+                
+            //if(LightPassed)
+                //distanceToLight = DistToLight;
+            //else
+                distanceToLight = HandleLight();
+
+            double distanceToCar = 1000;
 
             if (FrontCar != null)
-                AdaptSpeed( DistanceTo(FrontCar) );
+                distanceToCar = DistanceTo(FrontCar);
+
+            //if (distanceToLight < DistToLight)
+            //    DistToLight = distanceToLight;
+            //else
+            //    LightPassed = true;
+
+
+            AdaptSpeed( distanceToCar < distanceToLight ? distanceToCar : distanceToLight );
+        }
+
+        private double HandleLight()
+        {
+            double distance;
+            TrafficLight[] lights = XRoad.trafLights.Where(l => l.Angle.Equals(Angle)).ToArray();
+            foreach (TrafficLight light in lights)
+            {
+                distance = DistanceTo(light);
+                if (distance <= RefDistance
+                    && (light.CurrentColor == 0 || light.CurrentColor == 2))
+                {
+                    return distance;
+                }
+
+                //Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+            }
+            return DistToLight - 1;
         }
 
         // why internal?
@@ -248,21 +276,12 @@ namespace MultiagentVS.Model
                 Margin = new Thickness(PosX, PosY, 0, 0),
                 Stroke = BorderColor,
                 Fill = Color
-            };//,
-                //smallRect = new ShapeRectangle
-                //{
-                //    Height = 10,
-                //    Width = 10,
-                //    Margin = new Thickness(PosX + Length - 10, PosY, 0, 0),
-                //    Stroke = Brushes.Red,
-                //    Fill = Brushes.Red
-                //};
+            };
 
             MainWindow.RotateRectangle(ref mainRect, DegAngle, Middle);
             //MainWindow.RotateRectangle(ref smallRect, DegAngle, Middle);
 
             parent.Children.Add(mainRect);
-            //parent.Children.Add(smallRect);
         }
 
         public bool IsOutOfMap()

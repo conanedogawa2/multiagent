@@ -31,15 +31,23 @@ namespace MultiagentVS.Model
 
         public static readonly int Height = 30;
 
+        public double CarX { get; private set; }
+        public double CarY { get; private set; }
+
         public Car LastCar => Cars.LastOrDefault();
 
-        public Road(double sensAngle, double posY, double posX = 0, int length = 100)
+
+
+        public Road(double sensAngle, double posY, double posX, double carX = 0, double carY = 0, int length = 100)
         {
             this.PosY = posY;
             PosX = posX;
             SensAngle = sensAngle;
             Length = length;
             Cars = new List<Car>();
+
+            CarX = carX.Equals(0) ? posX : carX;
+            CarY = carY.Equals(0) ? posY : carY;
         }
 
 
