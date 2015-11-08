@@ -11,18 +11,23 @@ namespace MultiagentVS
     public class Map
     {
         public event MapUpdated mapUpdatedEvent;
-        public static readonly short MAXCAR = 10;
+        public static readonly short MAXCAR = 15;
 
         //public static TrafficLight TrafLight;// = new TrafficLight();
         public static XRoad XRoad { get; set; }
 
         private static int RoadBaseY => 100;
+        public static int TotalCars = 0;
 
         public static List<Road> Roads = new List<Road>
         {
-            new Road(Math.PI, RoadBaseY, 0, 800),
-            new Road(0, RoadBaseY + Road.Height, 0),
+            //new Road(Math.PI, RoadBaseY, 0, 800),
             //new Road(Math.PI / 4, RoadBaseY + Road.Height, -10),
+
+
+            new Road(0, RoadBaseY, 0),
+            new Road(0, RoadBaseY + Road.Height, 0),
+
             new Road(Math.PI / -2, 0, 500, 0, 610),
             new Road(Math.PI / 2, 0, 500 - Road.Height, 0, 0)
         };

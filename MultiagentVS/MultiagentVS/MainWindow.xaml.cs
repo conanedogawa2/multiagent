@@ -95,6 +95,8 @@ namespace MultiagentVS
                 if (c.IsOutOfMap())
                 {
                     cars.RemoveAt(index);
+                    //Map.TotalCars -= 1;
+
                     max--;
 
                     if (max == index)
@@ -105,6 +107,7 @@ namespace MultiagentVS
                 else
                     c.Draw(ref mapCanvas);
             }
+            Map.TotalCars = cars.Count;
 
             if(Map.XRoad != null)
                 Map.XRoad.Draw(ref mapCanvas);

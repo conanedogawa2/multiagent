@@ -20,7 +20,7 @@ namespace MultiagentVS.Model
         public static readonly Window Window = ((App) Application.Current).MainWindow;
 
         //private const double DistanceMargeAcceptance = 0.5;
-        public const double RefDistance = 300, MinDistance = 130;
+        public const double RefDistance = 300, MinDistance = 140;
 
         public readonly short Id;
 
@@ -188,33 +188,64 @@ namespace MultiagentVS.Model
                 BorderColor = Brushes.Red;
 
             double distanceToLight;
-                
+
+
+            //distanceToLight = DistToLight;
+
+
             //if(LightPassed)
-                //distanceToLight = DistToLight;
+            //distanceToLight = DistToLight;
             //else
-                distanceToLight = HandleLight();
+            distanceToLight = HandleLight();
+
+            // remove
+            if(Angle.Equals(Math.PI / 2))
+                Debug.WriteLine("lol");
+            //////////
 
             double distanceToCar = 1000;
 
             if (FrontCar != null)
                 distanceToCar = DistanceTo(FrontCar);
 
-            //if (distanceToLight < DistToLight)
-            //    DistToLight = distanceToLight;
-            //else
-            //    LightPassed = true;
+            if (distanceToLight <= DistToLight)
+                DistToLight = distanceToLight;
+            else
+                LightPassed = true;
 
 
-            AdaptSpeed( distanceToCar < distanceToLight ? distanceToCar : distanceToLight );
+            AdaptSpeed(LightPassed || distanceToCar < distanceToLight ? distanceToCar : distanceToLight );
         }
 
         private double HandleLight()
         {
             double distance;
             TrafficLight[] lights = XRoad.trafLights.Where(l => l.Angle.Equals(Angle)).ToArray();
+            
             foreach (TrafficLight light in lights)
             {
                 distance = DistanceTo(light);
+
+                // remove
+                if (Angle.Equals(Math.PI / 2))
+                {
+                    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+
+                    if (distance <= 40)
+                        Debug.WriteLine("lol");
+                }
+                if (Angle.Equals(Math.PI / -2))
+                {
+                    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+
+                    if (distance <= 40)
+                        Debug.WriteLine("lol");
+                }
+                /////////
+
+
+
+
                 if (distance <= RefDistance
                     && (light.CurrentColor == 0 || light.CurrentColor == 2))
                 {
@@ -223,7 +254,7 @@ namespace MultiagentVS.Model
 
                 //Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
             }
-            return DistToLight - 1;
+            return 999;
         }
 
         // why internal?
@@ -279,7 +310,6 @@ namespace MultiagentVS.Model
             };
 
             MainWindow.RotateRectangle(ref mainRect, DegAngle, Middle);
-            //MainWindow.RotateRectangle(ref smallRect, DegAngle, Middle);
 
             parent.Children.Add(mainRect);
         }

@@ -13,10 +13,13 @@ namespace MultiagentVS.Model
 {
     public class CarMan
     {
+        public int MsInterval { get; set; }
+        public int SInterval { get; set;}
+
         public CarMan()
         {
-            int MsInterval = Map.GetRandomInt(100, 999);
-            int SInterval = Map.GetRandomInt(0, 2);
+            MsInterval = Map.GetRandomInt(0, 999);
+            SInterval = Map.GetRandomInt(1, 5);
 
             DispatcherTimer dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += dispatcherTimer_Tick;
@@ -28,14 +31,18 @@ namespace MultiagentVS.Model
         {
             CreateCar();
 
-            int MsInterval = Map.GetRandomInt(10, 999);
-            int SInterval = Map.GetRandomInt(0, 1);
+            MsInterval = Map.GetRandomInt(10, 999);
+            SInterval = Map.GetRandomInt(0, 1);
+
             ((DispatcherTimer) _sender).Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
             ((DispatcherTimer)_sender).Start();
         }
 
-        public static void CreateCar()
+        private static void CreateCar()
         {
+            if (Map.TotalCars >= Map.MAXCAR)
+                return;
+
             Road road;
             double carX = 0;
             int nbRoad = Map.Roads.Count;
@@ -44,10 +51,13 @@ namespace MultiagentVS.Model
 
             road = Map.Roads[rand];
 
+            Map.TotalCars ++;
+
+            // do road.AddCar
             Car frontCar = road.LastCar,
                 car = new Car(carColor, road, frontCar);
 
-            Debug.WriteLine("------------Car " + car.Id + " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
+            //Debug.WriteLine("------------Car " + car.Id + " created behind " + frontCar?.Id + " on road having PosY=" + road.PosY);
         }
 
         private static SolidColorBrush RandomBrush()
