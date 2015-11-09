@@ -42,13 +42,16 @@ namespace MultiagentVS.Model
 
         public Car LastCar => Cars.LastOrDefault();
 
+        public short GotYouBitchRoad { get; private set; }
+
         //public Canvas mapCanvas { get; private set; }
 
-        public Road(double sensAngle, double posY, double posX, double carX = 0, double carY = 0, int length = 100)
+        public Road(short gotYouBitchRoad, double sensAngle, double posY, double posX, double carX = 0, double carY = 0, int length = 100)
         {
             this.PosY = posY;
             PosX = posX;
             SensAngle = sensAngle;
+            GotYouBitchRoad = gotYouBitchRoad;
             Length = length;
             Cars = new List<Car>();
 

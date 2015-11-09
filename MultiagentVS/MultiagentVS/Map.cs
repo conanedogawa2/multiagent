@@ -24,10 +24,10 @@ namespace MultiagentVS
         {
             //new Road(Math.PI, RoadBaseY, 0, 800),
             //new Road(Math.PI / 4, RoadBaseY + Road.Height, -10),
-            new Road(0, RoadBaseY, 0),
-            new Road(0, RoadBaseY + Road.Height, 0),
-            new Road(Math.PI / -2, 0, 500, 0, 610),
-            new Road(Math.PI / 2, 0, 500 - Road.Height, 0, 0)
+            new Road(0, 0, RoadBaseY, 0),
+            new Road(1, 0, RoadBaseY + Road.Height, 0),
+            new Road(2, Math.PI / -2, 0, 500, 0, 610),
+            new Road(3, Math.PI / 2, 0, 500 - Road.Height)
         };
 
         static Random _randomGenerator;

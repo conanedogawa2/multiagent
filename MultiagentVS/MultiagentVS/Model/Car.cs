@@ -206,8 +206,18 @@ namespace MultiagentVS.Model
             distanceToLight = HandleLight();
 
             // remove
-            if(Angle.Equals(Math.PI / 2))
-                Debug.WriteLine("lol");
+            if (_road.GotYouBitchRoad == 1)
+            {
+                //Debug.WriteLine("----- " + Color + " " + distanceToLight + " " + Angle);
+
+                if (distanceToLight <= 40)
+                    Debug.WriteLine("lol");
+            }
+            // end remove
+
+            // remove
+            //if (Angle.Equals(Math.PI / 2))
+            //    Debug.WriteLine("lol");
             //////////
 
             double distanceToCar = 1000;
@@ -234,21 +244,31 @@ namespace MultiagentVS.Model
                 distance = DistanceTo(light);
 
                 // remove
-                if (Angle.Equals(Math.PI / 2))
+                if (_road.GotYouBitchRoad == 1)
                 {
-                    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+                    //Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
 
                     if (distance <= 40)
+                    {
                         Debug.WriteLine("lol");
-                }
-                if (Angle.Equals(Math.PI / -2))
-                {
-                    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
 
-                    if (distance <= 40)
-                        Debug.WriteLine("lol");
+                        if (light.CurrentColor == 0 || light.CurrentColor == 2)
+                        {
+                            Debug.WriteLine("bonchour");
+                        }
+                    }
+                    
                 }
-                /////////
+                //if (Angle.Equals(Math.PI / -2))
+                //{
+                //    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+
+                //    if (distance <= 40)
+                //        Debug.WriteLine("lol");
+                //}
+                
+
+                // end remove
 
 
 
