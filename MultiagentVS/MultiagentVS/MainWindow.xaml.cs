@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -16,16 +17,22 @@ using Line = System.Windows.Shapes.Line;
 
 namespace MultiagentVS
 {
+    public delegate void DoUpdate();
+    //public delegate void DoDraw(Canvas mapCanvas);
+
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
-        private static int FPS = 60;
+        static int FPS = 60;
         //public static readonly int Width = 800;
         //public static readonly int Height = 600;
         Map _myMap;
         CarMan _cm;
+        public event DoUpdate doUpdateEvent;
+        //public event DoDraw doDrawEvent;
+        DispatcherTimer _dispatcherTimer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -42,10 +49,9 @@ namespace MultiagentVS
             _myMap = new Map(mapCanvas.ActualWidth, mapCanvas.ActualHeight);
             _myMap.mapUpdatedEvent += myMap_mapUpdatedEvent;
 
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
-            dispatcherTimer.Start();
+            
+            this._dispatcherTimer.Tick += dispatcherTimer_Tick;
+            this._dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
         }
         
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -55,6 +61,7 @@ namespace MultiagentVS
                 _cm = new CarMan();
                 //Map.TrafLight = new TrafficLight();
                 Map.XRoad = new XRoad();
+                _dispatcherTimer.Start();
             }
         }
 
@@ -63,29 +70,23 @@ namespace MultiagentVS
             mapCanvas.Children.Clear();
 
             this.DrawMap();
-
+            //doDrawEvent?.Invoke(mapCanvas);
+            
             mapCanvas.UpdateLayout();
         }
 
         private void DrawMap(/*IEnumerable<Car> cars*/)
         {
-            // TODO: pass cars as param
-            //List<Car> cars = Map.LeftToRight.Cars.Concat(Map.RightToLeft.Cars).ToList();
-
-
             List<Car> cars = new List<Car>();
 
             foreach (Road road in Map.Roads)
             {
                 cars = cars.Concat(road.Cars).ToList();
-                road.Draw(ref mapCanvas);
+                road.Draw(mapCanvas);
             }
 
             int index = 0, max = cars.Count;
 
-            //Map.LeftToRight.Draw(ref mapCanvas);
-            //Map.RightToLeft.Draw(ref mapCanvas);
-            //Map.TopToBottom.Draw(ref mapCanvas);
             Car c;
 
             for (; index < max; index++)
@@ -105,12 +106,12 @@ namespace MultiagentVS
                     index--;
                 }
                 else
-                    c.Draw(ref mapCanvas);
+                    c.Draw(mapCanvas);
             }
             Map.TotalCars = cars.Count;
 
-            if(Map.XRoad != null)
-                Map.XRoad.Draw(ref mapCanvas);
+            if (Map.XRoad != null)
+                Map.XRoad.Draw(mapCanvas);
         }
 
         public static void RotateRectangle(ref ShapeRectangle rec, double angle, PointF middle)
@@ -125,14 +126,12 @@ namespace MultiagentVS
             rec.LayoutTransform = rt;
         }
 
-        public static void RotateCar(ref Car car, double angle, PointF middle)
-        {
-
-        }
-
         void dispatcherTimer_Tick(object _sender, EventArgs _e)
         {
-            _myMap.UpdateEnvironnement();
+            //_myMap.UpdateEnvironnement();
+
+            // map must subscribe to this event
+            doUpdateEvent?.Invoke();
         }
     }
 }

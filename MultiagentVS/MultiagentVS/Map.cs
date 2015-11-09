@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Mime;
+using System.Windows;
 using MultiagentVS.Model;
 
 namespace MultiagentVS
@@ -23,11 +24,8 @@ namespace MultiagentVS
         {
             //new Road(Math.PI, RoadBaseY, 0, 800),
             //new Road(Math.PI / 4, RoadBaseY + Road.Height, -10),
-
-
             new Road(0, RoadBaseY, 0),
             new Road(0, RoadBaseY + Road.Height, 0),
-
             new Road(Math.PI / -2, 0, 500, 0, 610),
             new Road(Math.PI / 2, 0, 500 - Road.Height, 0, 0)
         };
@@ -43,6 +41,8 @@ namespace MultiagentVS
             MAX_HEIGHT = _height;
             _randomGenerator = new Random();
 
+            //win.doUpdateEvent += UpdateEnvironnement;
+            ((MainWindow) ((App)Application.Current).MainWindow).doUpdateEvent += UpdateEnvironnement;
         }
 
         //public void AddCarOnRoad(Car c, ref Road road)

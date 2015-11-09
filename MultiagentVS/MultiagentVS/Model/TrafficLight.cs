@@ -34,6 +34,7 @@ namespace MultiagentVS.Model
             };
 
             CurrentColor = 0;
+            //((MainWindow)((App)Application.Current).MainWindow).doDrawEvent += Draw;
         }
 
         private const int SInterval = 5;
@@ -44,7 +45,7 @@ namespace MultiagentVS.Model
             //CurrentColor += 1;
         }
 
-        public void Draw(ref Canvas parent)
+        public override void Draw(Canvas parent)
         {
             // TODO: ref to the ellipse
             Ellipse mainRect = new Ellipse

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace MultiagentVS.Model
@@ -9,6 +10,8 @@ namespace MultiagentVS.Model
         public double PosX;
 
         public double PosY;
+
+        //protected readonly MainWindow _win = (MainWindow) Application.Current.MainWindow;
 
         public ObjectInWorld() { }
 
@@ -39,6 +42,6 @@ namespace MultiagentVS.Model
             //return Math.Sqrt( SquareDistanceTo(_object) );
         }
 
-        public virtual void Draw(ref Canvas parent) { }
+        public virtual void Draw(Canvas parent) { }
     }
 }

@@ -84,6 +84,8 @@ namespace MultiagentVS.Model
             Id = CPT;
 
             rd.Cars.Add(this);
+
+            //((MainWindow)((App)Application.Current).MainWindow).doDrawEvent += Draw;
         }
 
         private double _angle;
@@ -178,6 +180,11 @@ namespace MultiagentVS.Model
 
         public void Advance(float step = (float) 0.8)
         {
+            //if (IsOutOfMap())
+            //{
+                
+            //}
+
             PosX += Math.Cos(_angle)*_speed*step;
             PosY += Math.Sin(_angle)*_speed*step;
 
@@ -298,7 +305,7 @@ namespace MultiagentVS.Model
             return _road.Cars.Where(c => rec.IntersectsWith(c.RectF)).Where(c => !c.Equals(this)).ToList();
         }
 
-        public override void Draw(ref Canvas parent)
+        public override void Draw(Canvas parent)
         {
             ShapeRectangle mainRect = new ShapeRectangle
             {

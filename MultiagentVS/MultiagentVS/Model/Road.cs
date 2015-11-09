@@ -11,8 +11,14 @@ using MediaBrush = System.Windows.Media.Brushes;
 
 namespace MultiagentVS.Model
 {
+    //public delegate void DoUpdate();
+
     public class Road : ObjectInWorld
     {
+        //public event DoUpdate doUpdateEvent;
+
+
+
         public static readonly Window Window = ((App)Application.Current).MainWindow;
         public PointF Middle
             => new PointF((float)(this.PosX + Length / 2), (float)(PosX - Length / 2));
@@ -36,7 +42,7 @@ namespace MultiagentVS.Model
 
         public Car LastCar => Cars.LastOrDefault();
 
-
+        //public Canvas mapCanvas { get; private set; }
 
         public Road(double sensAngle, double posY, double posX, double carX = 0, double carY = 0, int length = 100)
         {
@@ -48,6 +54,11 @@ namespace MultiagentVS.Model
 
             CarX = carX.Equals(0) ? posX : carX;
             CarY = carY.Equals(0) ? posY : carY;
+
+            //MainWindow win = (MainWindow) ((App) Application.Current).MainWindow;
+            //mapCanvas = win.mapCanvas;
+            
+            //win.doDrawEvent += Draw;
         }
 
 
@@ -72,9 +83,30 @@ namespace MultiagentVS.Model
         {
             foreach (Car voiture in Cars)
                 voiture.Update();
+            //int index = 0, max = Cars.Count;
+            //Car c;
+            //for (; index < max; index++)
+            //{
+            //    c = Cars.ElementAt(index);
+
+            //    if (c.IsOutOfMap())
+            //    {
+            //        Cars.RemoveAt(index);
+            //        Map.TotalCars -= 1;
+
+            //        max--;
+
+            //        if (max == index)
+            //            return;
+
+            //        index--;
+            //    }
+            //    else
+            //        c.Update();
+            //}
         }
 
-        public override void Draw(ref Canvas parent)
+        public override void Draw(Canvas parent)
         {
             ShapeRectangle mainRect = new ShapeRectangle
             {
