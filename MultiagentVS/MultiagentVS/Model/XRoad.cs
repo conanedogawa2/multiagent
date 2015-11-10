@@ -15,6 +15,7 @@ namespace MultiagentVS.Model
 
         public XRoad()
         {
+            // TODO: put lights in roads, then retrieve 'em
             trafLights = new TrafficLight[4]{
                 new TrafficLight(Math.PI / -2)
                 {
@@ -46,7 +47,7 @@ namespace MultiagentVS.Model
 
         private void StartTrafficLights()
         {
-            // TODO: event
+            // TODO: event, maybe
             foreach (TrafficLight light in trafLights)
                 light.Start();
         }

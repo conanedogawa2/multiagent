@@ -18,6 +18,8 @@ using Line = System.Windows.Shapes.Line;
 namespace MultiagentVS
 {
     public delegate void DoUpdate();
+    //public delegate void RemoveCar(Car c);
+
     //public delegate void DoDraw(Canvas mapCanvas);
 
     /// <summary>
@@ -31,6 +33,8 @@ namespace MultiagentVS
         Map _myMap;
         CarMan _cm;
         public event DoUpdate doUpdateEvent;
+        //public event RemoveCar removeCarEvent;
+
         //public event DoDraw doDrawEvent;
         DispatcherTimer _dispatcherTimer = new DispatcherTimer();
 
@@ -96,7 +100,7 @@ namespace MultiagentVS
                 if (c.IsOutOfMap())
                 {
                     cars.RemoveAt(index);
-                    //Map.TotalCars -= 1;
+                    Map.TotalCars -= 1;
 
                     max--;
 

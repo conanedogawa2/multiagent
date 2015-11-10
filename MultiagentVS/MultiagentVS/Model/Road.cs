@@ -11,14 +11,10 @@ using MediaBrush = System.Windows.Media.Brushes;
 
 namespace MultiagentVS.Model
 {
-    //public delegate void DoUpdate();
 
     public class Road : ObjectInWorld
     {
-        //public event DoUpdate doUpdateEvent;
-
-
-
+        
         public static readonly Window Window = ((App)Application.Current).MainWindow;
         public PointF Middle
             => new PointF((float)(this.PosX + Length / 2), (float)(PosX - Length / 2));
@@ -57,11 +53,11 @@ namespace MultiagentVS.Model
 
             CarX = carX.Equals(0) ? posX : carX;
             CarY = carY.Equals(0) ? posY : carY;
+        }
 
-            //MainWindow win = (MainWindow) ((App) Application.Current).MainWindow;
-            //mapCanvas = win.mapCanvas;
-            
-            //win.doDrawEvent += Draw;
+        private void WinOnRemoveCarEvent(Car car)
+        {
+            Cars.Remove(car);
         }
 
 

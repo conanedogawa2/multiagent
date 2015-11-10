@@ -239,6 +239,7 @@ namespace MultiagentVS.Model
             double distance;
             TrafficLight[] lights = XRoad.trafLights.Where(l => l.Angle.Equals(Angle)).ToArray();
             
+            // TODO: test distance to light on this' road
             foreach (TrafficLight light in lights)
             {
                 distance = DistanceTo(light);

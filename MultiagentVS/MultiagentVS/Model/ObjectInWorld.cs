@@ -11,7 +11,7 @@ namespace MultiagentVS.Model
 
         public double PosY;
 
-        //protected readonly MainWindow _win = (MainWindow) Application.Current.MainWindow;
+        protected readonly MainWindow _win = (MainWindow)Application.Current.MainWindow;
 
         public ObjectInWorld() { }
 
