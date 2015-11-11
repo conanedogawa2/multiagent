@@ -21,6 +21,8 @@ namespace MultiagentVS.Model
 
         public float Length { get; private set; }
 
+        public TrafficLight Light { get; set; }
+
         public List<Car> Cars { get; set; }
 
         public double SensAngle { get; private set; }

@@ -238,77 +238,18 @@ namespace MultiagentVS.Model
         {
             double distance;
             TrafficLight[] lights = XRoad.trafLights.Where(l => l.Angle.Equals(Angle)).ToArray();
-            
-            // TODO: test distance to light on this' road
-            foreach (TrafficLight light in lights)
+
+            TrafficLight light = _road.Light;
+            distance = DistanceTo(light);
+
+            if (distance <= RefDistance
+                && (light.CurrentColor == 0 || light.CurrentColor == 2))
             {
-                distance = DistanceTo(light);
-
-                // remove
-                if (_road.GotYouBitchRoad == 1)
-                {
-                    //Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
-
-                    if (distance <= 40)
-                    {
-                        Debug.WriteLine("lol");
-
-                        if (light.CurrentColor == 0 || light.CurrentColor == 2)
-                        {
-                            Debug.WriteLine("bonchour");
-                        }
-                    }
-                    
-                }
-                //if (Angle.Equals(Math.PI / -2))
-                //{
-                //    Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
-
-                //    if (distance <= 40)
-                //        Debug.WriteLine("lol");
-                //}
-                
-
-                // end remove
-
-
-
-
-                if (distance <= RefDistance
-                    && (light.CurrentColor == 0 || light.CurrentColor == 2))
-                {
-                    return distance;
-                }
-
-                //Debug.WriteLine("----- " + Color + " " + distance + " " + light.CurrentColor + " " + light.Angle + " " + Angle);
+                return distance;
             }
+
             return 999;
         }
-
-        // why internal?
-        //internal double DistanceToCar(Car c)
-        //{
-
-        //}
-
-        //internal double DistanceToPoint(double wallXMin, double wallYMin, double wallXMax, double wallYMax)
-        //{
-        //    double min = double.MaxValue;
-        //    min = Math.Min(min, this.PosX - wallXMin);
-        //    min = Math.Min(min, this.PosY - wallYMin);
-        //    min = Math.Min(min, wallYMax - this.PosY);
-        //    min = Math.Min(min, wallXMax - this.PosX);
-        //    return min;
-        //}
-
-        //internal double DistanceToPoint(double x, double y)
-        //{
-        //    double squaredDist = 0;
-
-        //    squaredDist = (PosX - x)*(PosX - x) + (PosY - y)*(PosY - y);
-
-        //    return squaredDist;
-        //}
 
         public void Update()
         {
