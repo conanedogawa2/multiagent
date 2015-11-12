@@ -7,15 +7,15 @@ namespace MultiagentVS.Model
 {
     public class ObjectInWorld
     {
-        public double PosX;
+        public float PosX;
 
-        public double PosY;
+        public float PosY;
 
         protected readonly MainWindow _win = (MainWindow)Application.Current.MainWindow;
 
         public ObjectInWorld() { }
 
-        public ObjectInWorld(double _x, double _y)
+        public ObjectInWorld(float _x, float _y)
         {
             PosX = _x;
             PosY = _y;

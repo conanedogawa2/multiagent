@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using System.Windows.Shapes;
 using ShapeRectangle = System.Windows.Shapes.Rectangle;
+using StrucRectangle = System.Drawing.RectangleF;
 using MediaBrush = System.Windows.Media.Brushes;
 
 
@@ -23,7 +25,8 @@ namespace MultiagentVS.Model
 
         public TrafficLight Light { get; set; }
 
-        public List<Car> Cars { get; set; }
+        private List<Car> _cars;
+        public List<Car> Cars { get { return _cars; } set { _cars = value; } }
 
         public double SensAngle { get; private set; }
 
@@ -35,8 +38,8 @@ namespace MultiagentVS.Model
 
         public static readonly int Height = 30;
 
-        public double CarX { get; private set; }
-        public double CarY { get; private set; }
+        public float CarX { get; private set; }
+        public float CarY { get; private set; }
 
         public Car LastCar => Cars.LastOrDefault();
 
@@ -44,17 +47,20 @@ namespace MultiagentVS.Model
 
         //public Canvas mapCanvas { get; private set; }
 
-        public Road(short gotYouBitchRoad, double sensAngle, double posY, double posX, double carX = 0, double carY = 0, int length = 100)
+        public Road(short gotYouBitchRoad, double sensAngle, float posY, float posX, float carX = 0, float carY = 0, int length = 100, float width = 0)
         {
             this.PosY = posY;
             PosX = posX;
             SensAngle = sensAngle;
+            Width = width;
             GotYouBitchRoad = gotYouBitchRoad;
             Length = length;
             Cars = new List<Car>();
 
             CarX = carX.Equals(0) ? posX : carX;
             CarY = carY.Equals(0) ? posY : carY;
+
+            this.Width = width.Equals(0) ? (float)Window.Width : width;
         }
 
         private void WinOnRemoveCarEvent(Car car)
@@ -80,9 +86,19 @@ namespace MultiagentVS.Model
             UpdateCars();
         }
 
+        public override string ToString()
+        {
+            return "[Road] n°" + GotYouBitchRoad + ", " + SensDegAngle + "°";
+        }
+
         private void UpdateCars()
         {
-            foreach (Car voiture in Cars)
+            if (Cars == null || Cars.Count == 0)
+                return;
+
+            Car[] tmpCarz = Cars.ToArray();
+
+            foreach (Car voiture in tmpCarz)
                 voiture.Update();
             //int index = 0, max = Cars.Count;
             //Car c;
@@ -107,19 +123,33 @@ namespace MultiagentVS.Model
             //}
         }
 
+        public float Width { get; private set; }
+
+        public StrucRectangle StructRect => new RectangleF(PosX, PosY, Width, Height);
+
+        public ShapeRectangle MainRectangle { get; private set; }
+
         public override void Draw(Canvas parent)
         {
-            ShapeRectangle mainRect = new ShapeRectangle
+            MainRectangle = new ShapeRectangle
             {
                 Height = Height,
-                Width = Window.Width,
+                Width = Width,
                 Margin = new Thickness(PosX, PosY, 0, 0),
                 Fill = MediaBrush.DarkGray
             };
+            //ShapeRectangle testRect = new ShapeRectangle
+            //{
+            //    Height = Height,
+            //    Width = Width,
+            //    Margin = new Thickness(PosX, PosY, 0, 0),
+            //    Fill = MediaBrush.Red
+            //};
 
-            MainWindow.RotateRectangle(ref mainRect, SensDegAngle, Middle);
+            MainWindow.RotateRectangle(MainRectangle, SensDegAngle, Middle);
 
-            parent.Children.Add(mainRect);
+            parent.Children.Add(MainRectangle);
+            //parent.Children.Add(testRect);
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace MultiagentVS.Model
 {
@@ -15,45 +17,12 @@ namespace MultiagentVS.Model
 
         public XRoad()
         {
-            // TODO: put lights in roads, then retrieve 'em
-            //trafLights = new TrafficLight[2]{
-            //    new TrafficLight(Math.PI / -2)
-            //    {
-            //        PosX = 535,
-            //        PosY = 165
-            //    },
-            //    new TrafficLight(Math.PI / 2)
-            //    {
-            //        PosX = 455,
-            //        PosY = 85
-            //    }//,
-            //    //new TrafficLight(0)
-            //    //{
-            //    //    PosX = 435,
-            //    //    PosY = 85,
-            //    //    CurrentColor = 2
-            //    //},
-            //    //new TrafficLight(0)
-            //    //{
-            //    //    PosX = 435,
-            //    //    PosY = 165,
-            //    //    CurrentColor = 2
-            //    //}
-            //};
-
             trafLights = Map.Roads.Where(r => r.Light != null).Select(r => r.Light).ToArray();
-            //int UPPER = Map.Roads.Count(r => r.Light != null);
-            //for (int i = 0; i < UPPER; i++)
-            //{
-            //    TrafficLight t = Map.Roads[i].Light;
-            //    if (t == null)
-            //        --i;
-            //    else
-            //        trafLights[i] = t;
-            //}
 
             this.StartTrafficLights();
         }
+
+        public static Rect Rect = new Rect(new Point(470, 100), new Point(530, 160));
 
         private void StartTrafficLights()
         {
@@ -66,6 +35,15 @@ namespace MultiagentVS.Model
         {
             foreach (TrafficLight light in trafLights)
                 light.Draw(parent);
+
+            //parent.Children.Add(new Rectangle
+            //{
+            //    Height = Rect.Height,
+            //    Width = Rect.Width,
+            //    Margin = new Thickness(Rect.X, Rect.Y, 0, 0),
+            //    Stroke = Brushes.Chocolate,
+            //    Fill = Brushes.Chocolate
+            //});
         }
     }
 }

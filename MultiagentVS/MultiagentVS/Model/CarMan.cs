@@ -16,15 +16,17 @@ namespace MultiagentVS.Model
         public int MsInterval { get; set; }
         public int SInterval { get; set;}
 
+        private static DispatcherTimer _dispatcherTimer = new DispatcherTimer();
+
+
         public CarMan()
         {
             MsInterval = Map.GetRandomInt(0, 999);
             SInterval = Map.GetRandomInt(1, 5);
 
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
-            dispatcherTimer.Start();
+            _dispatcherTimer.Tick += dispatcherTimer_Tick;
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
+            _dispatcherTimer.Start();
         }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)
@@ -36,6 +38,8 @@ namespace MultiagentVS.Model
 
             ((DispatcherTimer) _sender).Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
             ((DispatcherTimer)_sender).Start();
+
+            //_dispatcherTimer.Stop();
         }
 
         private static void CreateCar()
@@ -50,6 +54,7 @@ namespace MultiagentVS.Model
             var carColor = RandomBrush();
 
             road = Map.Roads[rand];
+            //road = Map.Roads[3];
 
             Map.TotalCars ++;
 

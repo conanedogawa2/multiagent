@@ -22,9 +22,6 @@ namespace MultiagentVS
 
         public static List<Road> Roads = new List<Road>
         {
-            //new Road(Math.PI, RoadBaseY, 0, 800),
-            //new Road(Math.PI / 4, RoadBaseY + Road.Height, -10),
-                        
             new Road(0, 0, RoadBaseY, 0)
             {
                 Light = new TrafficLight(0)

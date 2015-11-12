@@ -134,8 +134,8 @@ namespace UnitTestProject
                     Margin = new Thickness(PosX + Length - 10, PosY, 0, 0)
                 };
 
-            MainWindow.RotateRectangle(ref mainRect, 90, Middle);
-            MainWindow.RotateRectangle(ref smallRect, 90, Middle);
+            MainWindow.RotateRectangle(mainRect, 90, Middle);
+            MainWindow.RotateRectangle(smallRect, 90, Middle);
         }
     }
 }

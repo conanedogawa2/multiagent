@@ -83,6 +83,10 @@ namespace MultiagentVS
         {
             List<Car> cars = new List<Car>();
 
+            if(cars.Count > 15)
+                throw new Exception("Should not happen");
+
+
             foreach (Road road in Map.Roads)
             {
                 cars = cars.Concat(road.Cars).ToList();
@@ -118,7 +122,7 @@ namespace MultiagentVS
                 Map.XRoad.Draw(mapCanvas);
         }
 
-        public static void RotateRectangle(ref ShapeRectangle rec, double angle, PointF middle)
+        public static void RotateRectangle(ShapeRectangle rec, double angle, PointF middle)
         {
             RotateTransform rt = new RotateTransform
             {

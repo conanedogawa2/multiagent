@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
+using Point = System.Windows.Point;
 using StrucRectangle = System.Drawing.RectangleF;
 using ShapeRectangle = System.Windows.Shapes.Rectangle;
 
@@ -71,17 +72,26 @@ namespace MultiagentVS.Model
             _length = 25;
             PosX = rd.CarX + Road.Height / (float)2;
             PosY = rd.CarY + Road.Height / (float)2;
-            _angle = rd.SensAngle;
             _color = c ?? Brushes.OrangeRed;
 
             _park = null;
 
             _road = rd;
+            _angle = rd.SensAngle;
 
             this.FrontCar = frontCar;
 
             ++CPT;
             Id = CPT;
+
+            MainRect = new ShapeRectangle
+            {
+                Height = this.Height,
+                Width = this.Length,
+                Margin = new Thickness(PosX, PosY, 0, 0),
+                Stroke = BorderColor,
+                Fill = Color
+            };
 
             rd.Cars.Add(this);
 
@@ -166,10 +176,12 @@ namespace MultiagentVS.Model
         private Road _road;
 
         public PointF Middle
-            => new PointF((float) ((this.PosX + this._height)/2), (float) ((this.PosX - this._height)/2));
+        {
+            get { return new PointF((float) ((this.PosX + this._height)/2), (float) ((this.PosX - this._height)/2)); }
+        }
 
-        public StrucRectangle RectF => new StrucRectangle((float) PosX, (float) PosY, this.Length, this.Height);
-
+        public StrucRectangle RectF => new StrucRectangle((float)PosX, (float)PosY, this.Length, this.Height);
+        //public ShapeRectangle RectF => new ShapeRectangle()
         //public static short Id
         //{
         //    get
@@ -178,15 +190,27 @@ namespace MultiagentVS.Model
         //    }
         //}
 
+        private bool ChangedRoad = false;
+
         public void Advance(float step = (float) 0.8)
         {
             //if (IsOutOfMap())
             //{
-                
-            //}
 
-            PosX += Math.Cos(_angle)*_speed*step;
-            PosY += Math.Sin(_angle)*_speed*step;
+            //}
+            Road closeRoad = null;
+            
+            if((_angle.Equals(Math.PI / 2) || _angle.Equals(Math.PI / -2)) && !ChangedRoad)
+                closeRoad = NearXRoad();
+
+            if (closeRoad != null)
+            {
+                Debug.WriteLine("close to road : " + closeRoad);
+                ChangeRoad(closeRoad);
+            }
+
+            PosX += (float)Math.Cos(_angle)*_speed*step;
+            PosY += (float)Math.Sin(_angle)*_speed*step;
 
             IEnumerable<Car> list = this.CollidingCars();
 
@@ -194,31 +218,9 @@ namespace MultiagentVS.Model
             if (list.Any())
                 BorderColor = Brushes.Red;
 
-            double distanceToLight;
 
+            double distanceToLight = HandleLight();
 
-            //distanceToLight = DistToLight;
-
-
-            //if(LightPassed)
-            //distanceToLight = DistToLight;
-            //else
-            distanceToLight = HandleLight();
-
-            // remove
-            if (_road.GotYouBitchRoad == 1)
-            {
-                //Debug.WriteLine("----- " + Color + " " + distanceToLight + " " + Angle);
-
-                if (distanceToLight <= 40)
-                    Debug.WriteLine("lol");
-            }
-            // end remove
-
-            // remove
-            //if (Angle.Equals(Math.PI / 2))
-            //    Debug.WriteLine("lol");
-            //////////
 
             double distanceToCar = 1000;
 
@@ -232,6 +234,100 @@ namespace MultiagentVS.Model
 
 
             AdaptSpeed(LightPassed || distanceToCar < distanceToLight ? distanceToCar : distanceToLight );
+        }
+
+        //private bool IsOverRoad(Road r)
+        //{
+        //    bool ret = false;
+        //    Rect roadRectangle = new Rect(r.MainRectangle.RenderSize);
+        //    Rect thisRectangle = new Rect(MainRect.RenderSize);
+
+        //    if (roadRectangle.Contains(new Point(PosX, PosY)))
+        //        ret = true;
+
+        //    //Rect roadRectangle = new Rect()
+
+
+        //    return ret;
+        //}
+
+        private void ChangeRoad(Road road)
+        {
+            road.Cars.Add(this);
+            _road.Cars.Remove(this);
+
+            _road = road;
+
+            if (_angle.Equals(Math.PI/-2))
+                PosY -= 15;
+            else if (_angle.Equals(Math.PI / 2))
+                PosY += 15;
+
+            _angle = road.SensAngle;
+
+            // changer la voiture de devant
+            float dist = 1000;
+            double tmpDist;
+            Car[] carz = road.Cars.ToArray();
+            Car closest = null;
+
+            // get closest car
+            foreach (Car car in carz)
+            {
+                if (car.Equals(this))
+                    continue;
+
+                tmpDist = DistanceTo(car);
+                if (tmpDist < dist)
+                {
+                    dist = (float) tmpDist;
+                    closest = car;
+                }
+            }
+
+            Car prevCar = _road.Cars.FirstOrDefault(c => c.FrontCar == closest);
+            if(prevCar != null)
+                prevCar.FrontCar = this;
+            FrontCar = closest;
+
+            ChangedRoad = true;
+        }
+
+        private Road NearXRoad()
+        {
+            Road[] roadz = Map.Roads.Where(r => r != _road && !r.SensAngle.Equals(_angle)).ToArray();
+            //StrucRectangle sr = new StrucRectangle(PosX, PosX, Length, Height);
+
+            //Road ro = roadz.FirstOrDefault(road => road.StructRect.IntersectsWith(sr));
+            Road ro = null;
+
+            //foreach (Road road in roadz)
+            //{
+            //    //if (road.StructRect.IntersectsWith(this.RectF))
+            //    if (IsOverRoad(road))
+            //    {
+            //        ro = road;
+            //        break;
+            //    }
+            //}
+
+            //if (ro != null)
+            //    Debug.WriteLine("its okay ;)");
+
+            PointF middle = new PointF((float)((this.PosX + this._height) / 2), (float)((this.PosX - this._height) / 2));
+
+
+            Debug.WriteLine(middle.ToString());
+            if (XRoad.Rect.Contains(new Point(PosX, PosY)))
+            {
+                Debug.WriteLine("ok bro");
+
+                ro = roadz.ElementAt(0);
+                if (PosY < XRoad.Rect.Top + XRoad.Rect.Height)
+                    ro = roadz.ElementAt(1);
+            }
+
+            return ro;
         }
 
         private double HandleLight()
@@ -267,9 +363,12 @@ namespace MultiagentVS.Model
             return _road.Cars.Where(c => rec.IntersectsWith(c.RectF)).Where(c => !c.Equals(this)).ToList();
         }
 
+        public ShapeRectangle MainRect { get; private set; }
+
+
         public override void Draw(Canvas parent)
         {
-            ShapeRectangle mainRect = new ShapeRectangle
+            MainRect = new ShapeRectangle
             {
                 Height = this.Height,
                 Width = this.Length,
@@ -278,9 +377,9 @@ namespace MultiagentVS.Model
                 Fill = Color
             };
 
-            MainWindow.RotateRectangle(ref mainRect, DegAngle, Middle);
+            MainWindow.RotateRectangle(MainRect, DegAngle, Middle);
 
-            parent.Children.Add(mainRect);
+            parent.Children.Add(MainRect);
         }
 
         public bool IsOutOfMap()

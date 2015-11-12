@@ -79,6 +79,7 @@
     <Compile Include="Model\Road.cs" />
     <Compile Include="Model\TrafficLight.cs" />
     <Compile Include="Model\XRoad.cs" />
+    <Compile Include="Params.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
