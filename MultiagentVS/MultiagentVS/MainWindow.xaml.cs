@@ -36,10 +36,11 @@ namespace MultiagentVS
         //public event RemoveCar removeCarEvent;
 
         //public event DoDraw doDrawEvent;
-        DispatcherTimer _dispatcherTimer = new DispatcherTimer();
+        private DispatcherTimer _dispatcherTimer = new DispatcherTimer();
 
         public MainWindow()
         {
+            IsRunning = false;
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
@@ -49,15 +50,32 @@ namespace MultiagentVS
         void MainWindow_Loaded(object _sender, RoutedEventArgs _e)
         {
             mapCanvas.MouseDown += mapCanvas_MouseDown;
+            KeyUp += mapCanvas_KeyUp;
 
             _myMap = new Map(mapCanvas.ActualWidth, mapCanvas.ActualHeight);
             _myMap.mapUpdatedEvent += myMap_mapUpdatedEvent;
+
 
             
             this._dispatcherTimer.Tick += dispatcherTimer_Tick;
             this._dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
         }
-        
+
+        private void mapCanvas_KeyUp(object sender, KeyEventArgs e)
+        {
+            Key k = e.Key;
+
+            switch (k)
+            {
+                case Key.Enter:
+                    if(IsRunning)
+                        Pause();
+                    else
+                        Resume();
+                    break;
+            }
+        }
+
         private void mapCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (_cm == null)
@@ -65,7 +83,8 @@ namespace MultiagentVS
                 _cm = new CarMan();
                 //Map.TrafLight = new TrafficLight();
                 Map.XRoad = new XRoad();
-                _dispatcherTimer.Start();
+                //_dispatcherTimer.Start();
+                Resume();
             }
         }
 
@@ -77,6 +96,22 @@ namespace MultiagentVS
             //doDrawEvent?.Invoke(mapCanvas);
             
             mapCanvas.UpdateLayout();
+        }
+
+        public bool IsRunning { get; private set; }
+
+        public void Pause()
+        {
+            _dispatcherTimer.Stop();
+            _cm.Pause();
+            IsRunning = false;
+        }
+
+        public void Resume()
+        {
+            _dispatcherTimer.Start();
+            _cm.Start();
+            IsRunning = true;
         }
 
         private void DrawMap(/*IEnumerable<Car> cars*/)

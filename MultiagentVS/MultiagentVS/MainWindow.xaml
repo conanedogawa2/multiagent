@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1067" Margin="-5,-10,0,0">
     <Grid>
-        <Canvas x:Name="mapCanvas" Height="Auto" Width="Auto" Background="Azure"/>
+        <Canvas x:Name="mapCanvas" Height="Auto" Width="Auto" Background="Azure"
+                KeyUp="mapCanvas_KeyUp"/>
     </Grid>
 </Window>

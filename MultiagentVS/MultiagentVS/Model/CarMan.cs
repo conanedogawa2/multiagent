@@ -21,13 +21,28 @@ namespace MultiagentVS.Model
 
         public CarMan()
         {
+            Start();
+        }
+
+        public void Pause()
+        {
+            _dispatcherTimer.Stop();
+            IsRunning = false;
+        }
+
+        public void Start()
+        {
             MsInterval = Map.GetRandomInt(0, 999);
             SInterval = Map.GetRandomInt(1, 5);
 
             _dispatcherTimer.Tick += dispatcherTimer_Tick;
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, SInterval, MsInterval);
             _dispatcherTimer.Start();
+
+            IsRunning = true;
         }
+
+        public bool IsRunning { get; set; }
 
         void dispatcherTimer_Tick(object _sender, EventArgs _e)
         {

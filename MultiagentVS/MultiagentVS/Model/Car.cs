@@ -268,7 +268,7 @@ namespace MultiagentVS.Model
             // changer la voiture de devant
             float dist = 1000;
             double tmpDist;
-            Car[] carz = road.Cars.ToArray();
+            Car[] carz = road.Cars.Where(c => c.PosX > PosX).ToArray();
             Car closest = null;
 
             // get closest car
