@@ -216,7 +216,17 @@ namespace MultiagentVS.Model
 
             BorderColor = Color;
             if (list.Any())
+            {
                 BorderColor = Brushes.Red;
+
+                foreach (Car car in list)
+                {
+                    if (!(car.PosX > PosX)) continue;
+
+                    FrontCar = car;
+                    break;
+                }
+            }
 
 
             double distanceToLight = HandleLight();

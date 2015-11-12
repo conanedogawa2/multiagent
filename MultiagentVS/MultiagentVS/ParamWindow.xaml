@@ -1,0 +1,20 @@
+﻿<Window x:Class="MultiagentVS.ParamWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultiagentVS"
+        mc:Ignorable="d"
+        Title="ParamWindow" Height="300" Width="300">
+    <Grid >
+        <Grid x:Name="paramGrid">
+            <TextBlock x:Name="fpsTbl" Text="Frame Par Secondes :" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0"/>
+            <TextBox x:Name="fpsTbo" Text="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="137,22,0,0" Width="28"/>
+
+            <TextBlock x:Name="maxVoitTbl" Text="Maximum de voitures :" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,55,0,0"/>
+            <TextBox x:Name="maxVoitTbo" Text="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="137,47,0,0" Width="28"/>
+        </Grid>
+        <Button x:Name="validerB" Content="Valider" HorizontalAlignment="Left" Margin="189,227,0,0" VerticalAlignment="Top" Width="75" Click="validerB_Click"/>
+        <Button x:Name="AnnulerB" Content="Annuler" HorizontalAlignment="Left" Margin="109,227,0,0" VerticalAlignment="Top" Width="75"/>
+    </Grid>
+</Window>

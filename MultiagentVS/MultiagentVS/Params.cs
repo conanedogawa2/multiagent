@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MultiagentVS
 {
-    class Params
+    public class Params
     {
+        public int FPS = 60;
     }
 }

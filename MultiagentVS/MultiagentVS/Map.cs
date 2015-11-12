@@ -12,7 +12,7 @@ namespace MultiagentVS
     public class Map
     {
         public event MapUpdated mapUpdatedEvent;
-        public static readonly short MAXCAR = 15;
+        public static short MAXCAR = 15;
 
         //public static TrafficLight TrafLight;// = new TrafficLight();
         public static XRoad XRoad { get; set; }

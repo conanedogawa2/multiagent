@@ -18,6 +18,7 @@ using Line = System.Windows.Shapes.Line;
 namespace MultiagentVS
 {
     public delegate void DoUpdate();
+
     //public delegate void RemoveCar(Car c);
 
     //public delegate void DoDraw(Canvas mapCanvas);
@@ -27,7 +28,9 @@ namespace MultiagentVS
     /// </summary>
     public partial class MainWindow
     {
-        static int FPS = 60;
+        public static Params Parameters = new Params();
+
+        //static int FPS = Parameters.FPS;
         //public static readonly int Width = 800;
         //public static readonly int Height = 600;
         Map _myMap;
@@ -57,8 +60,28 @@ namespace MultiagentVS
 
 
             
-            this._dispatcherTimer.Tick += dispatcherTimer_Tick;
-            this._dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
+            _dispatcherTimer.Tick += dispatcherTimer_Tick;
+        }
+
+        private ParamWindow _paramWindow = null;
+
+        private void ShowParamWindow()
+        {
+            if (_paramWindow != null)
+                return;
+
+            _paramWindow = new ParamWindow(Parameters);
+            _paramWindow.ParamsChangedEvent += Okay;
+            _paramWindow.Show();
+        }
+
+        private void Okay(ParamWindow sender, Params parameters)
+        {
+            Parameters = parameters;
+
+            _paramWindow?.Close();
+            _paramWindow = null;
+            Resume();
         }
 
         private void mapCanvas_KeyUp(object sender, KeyEventArgs e)
@@ -68,10 +91,11 @@ namespace MultiagentVS
             switch (k)
             {
                 case Key.Enter:
-                    if(IsRunning)
-                        Pause();
-                    else
-                        Resume();
+                    TriggerRunning();
+                    break;
+                case Key.P:
+                    Pause();
+                    ShowParamWindow();
                     break;
             }
         }
@@ -103,14 +127,23 @@ namespace MultiagentVS
         public void Pause()
         {
             _dispatcherTimer.Stop();
-            _cm.Pause();
+            _cm?.Pause();
             IsRunning = false;
+        }
+
+        public void TriggerRunning()
+        {
+            if (IsRunning)
+                Pause();
+            else
+                Resume();
         }
 
         public void Resume()
         {
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / Parameters.FPS);
             _dispatcherTimer.Start();
-            _cm.Start();
+            _cm?.Start();
             IsRunning = true;
         }
 
@@ -155,6 +188,12 @@ namespace MultiagentVS
 
             if (Map.XRoad != null)
                 Map.XRoad.Draw(mapCanvas);
+
+            mapCanvas.Children.Add(new TextBox
+            {
+                Text = Parameters.FPS + " FPS",
+                Foreground = Brushes.DarkCyan
+            });
         }
 
         public static void RotateRectangle(ShapeRectangle rec, double angle, PointF middle)
